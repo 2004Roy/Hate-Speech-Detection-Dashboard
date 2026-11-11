@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BengalGuard | Hate Speech & Sarcasm Analytics</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            panel: "#15182B",
+            panel2: "#1B1F36",
+            ink: "#F4F5FF",
+            muted: "#A7AAC4",
+            violetx: "#9565F5"
+          },
+          boxShadow: {
+            glow: "0 0 28px rgba(149,101,245,.13)"
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Chart.js and PapaParse -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="min-h-screen bg-[#0D1020] text-ink">
+  <div class="min-h-screen lg:flex">
+    <!-- Sidebar -->
+    <aside class="sidebar flex w-full flex-col border-b border-white/10 bg-[#111428] lg:fixed lg:inset-y-0 lg:w-64 lg:border-b-0 lg:border-r">
+      <div class="flex items-center gap-3 px-6 py-6">
+        <div class="brand-mark flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-2xl">🛡️</div>
+        <div>
+          <h1 class="text-xl font-extrabold tracking-tight">Bengal<span class="text-violet-400">Guard</span></h1>
+          <p class="text-xs text-muted">Bengali text intelligence</p>
+        </div>
+      </div>
+
+      <div class="px-5 pb-5 lg:mt-8">
+        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[.22em] text-slate-500">Workspace</p>
+        <a href="#overview" class="nav-link active"><span>▦</span> Dashboard</a>
+        <a href="#analysis" class="nav-link"><span>◷</span> Analysis</a>
+        <a href="#upload-section" class="nav-link"><span>⇧</span> Upload dataset</a>
+        <a href="#about" class="nav-link"><span>ⓘ</span> About</a>
+      </div>
+
+      <div class="mt-auto hidden px-6 pb-7 lg:block">
+        <div class="rounded-2xl border border-violet-400/20 bg-violet-500/10 p-4">
+          <p class="text-sm font-semibold text-violet-200">Safer conversations start with understanding.</p>
+          <p class="mt-2 text-xs leading-5 text-muted">Analyze Bengali text and explore model predictions in one place.</p>
+        </div>
+        <p class="mt-5 text-center text-[11px] text-slate-600">BengalGuard • Project Dashboard</p>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="w-full px-4 py-6 sm:px-6 lg:ml-64 lg:px-8 lg:py-8">
+      <header id="overview" class="mb-7 flex flex-col justify-between gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center">
+        <div>
+          <p class="mb-2 text-xs font-semibold uppercase tracking-[.2em] text-violet-400">Text classification analytics</p>
+          <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Hate Speech <span class="text-violet-400">&</span> Sarcasm Detector</h2>
+          <p class="mt-2 text-sm text-muted">Analyze, detect and understand toxicity in Bengali text.</p>
+        </div>
+        <div class="flex items-center gap-2 self-start rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs text-emerald-300 sm:self-center">
+          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+          Local dashboard
+        </div>
+      </header>
+
+      <!-- Metric cards -->
+      <section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="metric-card">
+          <div class="metric-icon bg-blue-500/15 text-blue-300">▤</div>
+          <div><p class="text-sm text-muted">Total samples</p><p id="totalSamples" class="mt-1 text-2xl font-bold">0</p></div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon bg-rose-500/15 text-rose-300">!</div>
+          <div><p class="text-sm text-muted">Hate speech</p><p id="hatePercent" class="mt-1 text-2xl font-bold">0%</p></div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon bg-violet-500/15 text-violet-300">☺</div>
+          <div><p class="text-sm text-muted">Sarcasm</p><p id="sarcasmPercent" class="mt-1 text-2xl font-bold">0%</p></div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon bg-emerald-500/15 text-emerald-300">✓</div>
+          <div><p class="text-sm text-muted">Neutral</p><p id="neutralPercent" class="mt-1 text-2xl font-bold">0%</p></div>
+        </article>
+      </section>
+
+      <section class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(300px,0.85fr)_minmax(0,1.65fr)]">
+        <!-- Upload panel -->
+        <article id="upload-section" class="panel-card">
+          <div class="mb-5 flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-xl text-violet-300">⇧</div>
+            <div>
+              <h3 class="font-semibold">Upload your dataset</h3>
+              <p class="text-xs text-muted">Import a Bengali text CSV file</p>
+            </div>
+          </div>
+
+          <label id="dropZone" for="csvFile" class="drop-zone flex min-h-56 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-violet-400/60 bg-violet-500/[.05] px-5 py-7 text-center transition hover:bg-violet-500/10">
+            <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-500/15 text-3xl text-violet-300">☁</div>
+            <p class="font-semibold">Drag & drop your CSV file</p>
+            <p class="my-2 text-xs text-muted">or</p>
+            <span class="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-glow">Browse files</span>
+            <p class="mt-4 text-xs text-slate-500">Supported format: .csv</p>
+          </label>
+          <input id="csvFile" type="file" accept=".csv,text/csv" class="hidden" />
+
+          <div class="mt-4 flex items-center justify-between gap-3">
+            <p id="fileName" class="truncate text-xs text-muted">No file selected</p>
+            <button id="loadDemo" class="shrink-0 text-xs font-semibold text-violet-300 hover:text-violet-200">Load demo data</button>
+          </div>
+          <p id="uploadStatus" class="mt-3 min-h-5 text-xs text-muted" aria-live="polite">Upload a CSV to populate the dashboard.</p>
+          <div class="mt-5 rounded-xl border border-white/5 bg-black/10 p-3">
+            <p class="text-xs font-semibold text-slate-300">Expected columns</p>
+            <p class="mt-1 text-xs leading-5 text-muted">Text / Post, Label / Category, Source (optional), Confidence (optional)</p>
+          </div>
+        </article>
+
+        <!-- Analysis area -->
+        <div id="analysis" class="space-y-5">
+          <!-- Filters -->
+          <article class="panel-card">
+            <div class="mb-4 flex items-center gap-2">
+              <span class="text-lg text-violet-300">▽</span>
+              <h3 class="font-semibold">Dataset filters</h3>
+              <span class="ml-auto text-xs text-muted">Refine results</span>
+            </div>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <label class="block">
+                <span class="mb-2 block text-xs text-muted">Label</span>
+                <select id="labelFilter" class="filter-select">
+                  <option value="all">All labels</option>
+                  <option value="hate">Hate speech</option>
+                  <option value="sarcasm">Sarcasm</option>
+                  <option value="neutral">Neutral</option>
+                </select>
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-xs text-muted">Source</span>
+                <select id="sourceFilter" class="filter-select"><option value="all">All sources</option></select>
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-xs text-muted">Minimum confidence</span>
+                <select id="confidenceFilter" class="filter-select">
+                  <option value="0">Any confidence</option>
+                  <option value="0.5">50% and above</option>
+                  <option value="0.7" selected>70% and above</option>
+                  <option value="0.9">90% and above</option>
+                </select>
+              </label>
+            </div>
+            <div class="mt-3 flex items-center justify-between">
+              <p id="filterSummary" class="text-xs text-muted">Showing 0 of 0 samples</p>
+              <button id="resetFilters" class="text-xs font-semibold text-violet-300 hover:text-white">↻ Reset filters</button>
+            </div>
+          </article>
+
+          <!-- Chart -->
+          <article class="panel-card">
+            <div class="mb-4 flex items-center justify-between">
+              <div>
+                <h3 class="font-semibold">Class distribution</h3>
+                <p class="mt-1 text-xs text-muted">Breakdown of the filtered dataset</p>
+              </div>
+              <span class="rounded-lg bg-white/5 px-2.5 py-1 text-xs text-muted">Overview</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="distributionChart" aria-label="Class distribution chart"></canvas>
+            </div>
+            <div id="chartLegend" class="mt-4 grid grid-cols-3 gap-2 text-center"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Insights and sample rows -->
+      <section class="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <article class="panel-card">
+          <div class="mb-4 flex items-center gap-2">
+            <span class="text-xl text-amber-300">✦</span>
+            <h3 class="font-semibold">Key insights</h3>
+          </div>
+          <div id="insights" class="space-y-3">
+            <p class="text-sm text-muted">Upload a dataset to see insights.</p>
+          </div>
+        </article>
+
+        <article class="panel-card">
+          <div class="mb-4 flex items-center justify-between">
+            <div>
+              <h3 class="font-semibold">Dataset preview</h3>
+              <p class="mt-1 text-xs text-muted">First five matching records</p>
+            </div>
+            <span id="previewCount" class="text-xs text-muted">0 records</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[420px] text-left text-xs">
+              <thead><tr class="border-b border-white/10 text-slate-400"><th class="pb-3 pr-3 font-medium">Text</th><th class="pb-3 pr-3 font-medium">Label</th><th class="pb-3 font-medium">Confidence</th></tr></thead>
+              <tbody id="previewBody" class="text-slate-300">
+                <tr><td colspan="3" class="py-5 text-center text-muted">No data loaded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <footer id="about" class="mt-8 border-t border-white/10 pt-5 text-center text-xs text-slate-600">
+        BengalGuard • Bengali Hate Speech & Sarcasm Detection Dashboard
+      </footer>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

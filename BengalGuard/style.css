@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; }
+.nav-link {
+  display: flex; align-items: center; gap: 13px; padding: 12px 14px;
+  margin: 5px 0; border-radius: 12px; color: #a7aac4; font-size: 14px;
+  transition: .2s ease;
+}
+.nav-link span { width: 20px; text-align: center; font-size: 18px; }
+.nav-link:hover, .nav-link.active {
+  color: #fff; background: linear-gradient(100deg, rgba(124,77,230,.32), rgba(124,77,230,.12));
+}
+.panel-card {
+  border: 1px solid rgba(148,163,184,.13); border-radius: 18px;
+  background: linear-gradient(145deg, rgba(25,29,51,.98), rgba(19,22,40,.98));
+  padding: 20px; box-shadow: 0 12px 35px rgba(0,0,0,.12);
+}
+.metric-card {
+  display: flex; align-items: center; gap: 16px; padding: 20px;
+  border: 1px solid rgba(148,163,184,.13); border-radius: 17px;
+  background: linear-gradient(145deg, #191d33, #14172a);
+}
+.metric-icon {
+  display: flex; height: 52px; width: 52px; flex-shrink: 0; align-items: center;
+  justify-content: center; border-radius: 16px; font-size: 25px; font-weight: 700;
+}
+.filter-select {
+  width: 100%; appearance: none; border: 1px solid rgba(148,163,184,.18);
+  border-radius: 11px; background: #111529; color: #eef0ff; padding: 11px 12px;
+  font-size: 12px; outline: none;
+}
+.filter-select:focus { border-color: #9565f5; box-shadow: 0 0 0 3px rgba(149,101,245,.12); }
+.filter-select option { background: #171b30; }
+.chart-wrap { position: relative; height: 230px; width: 100%; }
+.drop-zone.dragover { border-color: #c4a7ff; background: rgba(149,101,245,.15); transform: translateY(-2px); }
+.brand-mark { box-shadow: 0 0 25px rgba(149,101,245,.16); }
+.insight-row { display:flex; align-items:flex-start; gap:12px; border:1px solid rgba(148,163,184,.1); background:rgba(255,255,255,.025); border-radius:12px; padding:12px; }
+.insight-dot { height:8px; width:8px; margin-top:5px; flex-shrink:0; border-radius:50%; background:#a78bfa; }
+.label-pill { display:inline-block; border-radius:999px; padding:4px 8px; font-size:10px; font-weight:600; }
+@media (max-width: 1023px) {
+  .sidebar { position: relative; }
+  .sidebar > div:nth-child(2) { display:flex; flex-wrap:wrap; gap:4px; }
+  .sidebar > div:nth-child(2) p { width:100%; }
+  .nav-link { margin:0; padding:9px 11px; }
+}
